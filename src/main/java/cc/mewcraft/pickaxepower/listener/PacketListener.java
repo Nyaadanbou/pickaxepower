@@ -9,24 +9,29 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.google.inject.Inject;
 import me.lucko.helper.terminable.Terminable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PacketListener implements Terminable {
     private final PickaxePower plugin;
     private final LoreWriter writer;
 
     @Inject
-    public PacketListener(@NonNull PickaxePower plugin, @NonNull LoreWriter writer) {
+    public PacketListener(
+            @NonNull PickaxePower plugin,
+            @NonNull LoreWriter writer
+    ) {
         this.plugin = plugin;
         this.writer = writer;
-        this.initialize();
+        this.initialize(); // Initialize it immediately upon the class instantiation
     }
 
     private void initialize() {
@@ -79,14 +84,14 @@ public class PacketListener implements Terminable {
                     if (result == null) return;
 
                     MerchantRecipe recipe2 = new MerchantRecipe(
-                        result,
-                        recipe.getUses(),
-                        recipe.getMaxUses(),
-                        recipe.hasExperienceReward(),
-                        recipe.getVillagerExperience(),
-                        recipe.getPriceMultiplier(),
-                        recipe.getDemand(),
-                        recipe.getSpecialPrice()
+                            result,
+                            recipe.getUses(),
+                            recipe.getMaxUses(),
+                            recipe.hasExperienceReward(),
+                            recipe.getVillagerExperience(),
+                            recipe.getPriceMultiplier(),
+                            recipe.getDemand(),
+                            recipe.getSpecialPrice()
                     );
                     recipe2.setIngredients(recipe.getIngredients());
                     list.add(recipe2);

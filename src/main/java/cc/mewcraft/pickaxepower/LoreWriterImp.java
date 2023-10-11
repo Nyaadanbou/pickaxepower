@@ -1,33 +1,36 @@
 package cc.mewcraft.pickaxepower;
 
-import cc.mewcraft.mewcore.util.PDCUtils;
-import com.google.inject.Inject;
+import cc.mewcraft.spatula.message.Translations;
+import cc.mewcraft.spatula.utils.PDCUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class LoreWriterImpl implements LoreWriter {
+import javax.inject.Inject;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+public class LoreWriterImp implements LoreWriter {
     private static final NamespacedKey LORE_SIZE_KEY = new NamespacedKey("pickaxepower", "lore_size");
 
-    private final PickaxePower plugin;
     private final PowerResolver powerResolver;
+    private final Translations translations;
 
     @Inject
-    public LoreWriterImpl(
-        @NonNull PickaxePower plugin,
-        @NonNull PowerResolver powerResolver
+    public LoreWriterImp(
+            @NonNull final PowerResolver powerResolver,
+            @NonNull final Translations translations
     ) {
-        this.plugin = plugin;
         this.powerResolver = powerResolver;
+        this.translations = translations;
     }
 
     @Override
@@ -37,9 +40,9 @@ public class LoreWriterImpl implements LoreWriter {
 
         PowerData pickaxePower = powerResolver.resolve(item);
 
-        Component powerText = plugin.getLang().of("item_lore_pickaxe_power")
-            .replace("power", pickaxePower.power())
-            .component();
+        Component powerText = translations.of("item_lore_pickaxe_power")
+                .replace("power", pickaxePower.power())
+                .component();
 
         ItemMeta itemMeta = Objects.requireNonNull(item.getItemMeta());
         List<Component> lore = itemMeta.hasLore() ? Objects.requireNonNull(itemMeta.lore()) : new ArrayList<>();

@@ -1,6 +1,7 @@
 package cc.mewcraft.pickaxepower;
 
 import org.bukkit.inventory.ItemStack;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface LoreWriter {

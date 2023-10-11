@@ -1,6 +1,7 @@
 package cc.mewcraft.pickaxepower;
 
 import net.kyori.adventure.text.Component;
+
 import org.jetbrains.annotations.NotNull;
 
 /**

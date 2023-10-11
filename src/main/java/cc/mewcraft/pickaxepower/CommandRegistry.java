@@ -8,22 +8,25 @@ import cloud.commandframework.minecraft.extras.AudienceProvider;
 import cloud.commandframework.minecraft.extras.MinecraftExceptionHandler;
 import cloud.commandframework.paper.PaperCommandManager;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import javax.inject.Inject;
+
 public class CommandRegistry extends PaperCommandManager<CommandSender> {
 
     private final List<Command<CommandSender>> preparedCommands;
 
-    public CommandRegistry(JavaPlugin plugin) throws Exception {
+    @Inject
+    public CommandRegistry(Plugin plugin) throws Exception {
         super(
-            plugin,
-            CommandExecutionCoordinator.simpleCoordinator(),
-            Function.identity(),
-            Function.identity()
+                plugin,
+                CommandExecutionCoordinator.simpleCoordinator(),
+                Function.identity(),
+                Function.identity()
         );
 
         this.preparedCommands = new ArrayList<>();
@@ -40,8 +43,8 @@ public class CommandRegistry extends PaperCommandManager<CommandSender> {
 
         // ---- Setup exception messages ----
         new MinecraftExceptionHandler<CommandSender>()
-            .withDefaultHandlers()
-            .apply(this, sender -> AudienceProvider.nativeAudience().apply(sender));
+                .withDefaultHandlers()
+                .apply(this, sender -> AudienceProvider.nativeAudience().apply(sender));
     }
 
     public final void prepareCommand(final Command<CommandSender> command) {

@@ -1,60 +1,58 @@
 package cc.mewcraft.pickaxepower;
 
-import cc.mewcraft.mewcore.message.Translations;
 import cc.mewcraft.pickaxepower.listener.PacketListener;
 import cc.mewcraft.pickaxepower.listener.PlayerListener;
+import cc.mewcraft.spatula.message.Translations;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+
+import javax.inject.Singleton;
 
 public class PickaxePower extends ExtendedJavaPlugin {
 
-    private Translations translations;
-    private CommandRegistry commandRegistry;
-
     @Override protected void enable() {
-        this.saveDefaultConfig();
-        this.reloadConfig();
+        saveDefaultConfig();
+        reloadConfig();
 
-        this.translations = new Translations(this, "languages");
-
+        // Configure bindings
         Injector injector = Guice.createInjector(new AbstractModule() {
             @Override protected void configure() {
-                this.bind(JavaPlugin.class).toInstance(PickaxePower.this);
-                this.bind(PickaxePower.class).toInstance(PickaxePower.this);
-                this.bind(LoreWriter.class).to(LoreWriterImpl.class);
-                this.bind(PowerResolver.class).to(PowerResolverImpl.class);
+                bind(JavaPlugin.class).toInstance(PickaxePower.this);
+                bind(PickaxePower.class).toInstance(PickaxePower.this);
+                bind(LoreWriter.class).to(LoreWriterImp.class);
+                bind(PowerResolver.class).to(PowerResolverImp.class);
+                bind(Translations.class).toProvider(() ->
+                        new Translations(PickaxePower.this, "languages")
+                ).in(Singleton.class);
             }
         });
 
-        PacketListener packetListener = this.bind(injector.getInstance(PacketListener.class));
-        PlayerListener playerListener = this.bind(injector.getInstance(PlayerListener.class));
-        this.registerListener(playerListener);
+        // Register packet listener
+        bind(injector.getInstance(PacketListener.class));
+
+        // Register player listener
+        registerListener(injector.getInstance(PlayerListener.class));
 
         try {
-            commandRegistry = new CommandRegistry(this);
+            CommandRegistry commandRegistry = injector.getInstance(CommandRegistry.class);
             commandRegistry.prepareCommand(commandRegistry
-                .commandBuilder("pickaxepower")
-                .literal("reload")
-                .permission("pickaxepower.command.reload")
-                .handler(context -> {
-                    this.onDisable();
-                    this.onEnable();
-                    context.getSender().sendRichMessage("<aqua>" + this.getName() + " has been reloaded!");
-                })
-                .build());
+                    .commandBuilder("pickaxepower")
+                    .literal("reload")
+                    .permission("pickaxepower.command.reload")
+                    .handler(context -> {
+                        onDisable();
+                        onEnable();
+                        context.getSender().sendRichMessage("<aqua>" + getName() + " has been reloaded!");
+                    })
+                    .build());
             commandRegistry.registerCommands();
         } catch (Exception e) {
             e.printStackTrace();
-            this.getSLF4JLogger().error("Failed to register commands!");
+            getSLF4JLogger().error("Failed to register commands!");
         }
-    }
-
-    public @NotNull Translations getLang() {
-        return translations;
     }
 
 }
