@@ -34,7 +34,7 @@ public class PickaxePower extends ExtendedJavaPlugin {
         bind(injector.getInstance(PacketListener.class));
 
         // Register player listener
-        registerListener(injector.getInstance(PlayerListener.class));
+        registerTerminableListener(injector.getInstance(PlayerListener.class)).bindWith(this);
 
         try {
             CommandRegistry commandRegistry = injector.getInstance(CommandRegistry.class);
